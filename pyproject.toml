@@ -14,5 +14,6 @@ dependencies = [
     "numpy==1.26.4",
     "opencv-python>=4.11.0.86",
     "tqdm>=4.67.3",
+    "scipy>=1.13.0",
     "zarr==2.18.7",
 ]

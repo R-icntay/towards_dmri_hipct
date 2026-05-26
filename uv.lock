@@ -2033,6 +2033,7 @@ dependencies = [
     { name = "natsort" },
     { name = "numpy" },
     { name = "opencv-python" },
+    { name = "scipy" },
     { name = "tqdm" },
     { name = "zarr" },
 ]
@@ -2047,6 +2048,7 @@ requires-dist = [
     { name = "natsort", specifier = ">=8.4.0" },
     { name = "numpy", specifier = "==1.26.4" },
     { name = "opencv-python", specifier = ">=4.11.0.86" },
+    { name = "scipy", specifier = ">=1.13.0" },
     { name = "tqdm", specifier = ">=4.67.3" },
     { name = "zarr", specifier = "==2.18.7" },
 ]
