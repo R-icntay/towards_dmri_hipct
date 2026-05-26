@@ -34,6 +34,7 @@ from fiberorient.util import make_sphere
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from utils.odf import vector_field_SH
 from utils.analysis import (
+    get_analysis_shape,
     get_voxel_ratio,
     compute_FA,
     extract_rotation_matrix,
@@ -44,15 +45,6 @@ from utils.analysis import (
 # ---------------------------------------------------------------------------
 # Utility functions
 # ---------------------------------------------------------------------------
-
-def get_analysis_shape(X, Y, Z, voxel_ratio):
-    """Crop dimensions to the largest multiple of voxel_ratio."""
-    return (
-        X - (X % voxel_ratio),
-        Y - (Y % voxel_ratio),
-        Z - (Z % voxel_ratio),
-    )
-
 
 def extract_z_indices_from_filename(filename):
     """Parse start and end Z indices from a zarr filename stem like 'eigenvalues_zyx_4160_5200'."""

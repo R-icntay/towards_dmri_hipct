@@ -3,6 +3,52 @@
 import numpy as np
 
 
+def get_analysis_shape(X, Y, Z, voxel_ratio):
+    """Crop dimensions to the largest multiple of voxel_ratio.
+
+    Parameters
+    ----------
+    X, Y, Z : int
+        Spatial dimensions.
+    voxel_ratio : int
+        Number of HiP-CT voxels per dMRI voxel.
+
+    Returns
+    -------
+    tuple of (int, int, int)
+    """
+    return (
+        X - (X % voxel_ratio),
+        Y - (Y % voxel_ratio),
+        Z - (Z % voxel_ratio),
+    )
+
+
+def compute_gfa_sh(coef, sh0_index=0):
+    """Compute generalised fractional anisotropy from SH coefficients.
+
+    Parameters
+    ----------
+    coef : ndarray
+        SH coefficients (last dimension = coefficients). Must use a
+        normalised SH basis.
+    sh0_index : int, optional
+        Index of the 0th-order SH coefficient.
+
+    Returns
+    -------
+    gfa : ndarray
+        GFA values in [0, 1].
+    """
+    coef_sq = coef ** 2
+    numer = coef_sq[..., sh0_index]
+    denom = coef_sq.sum(-1)
+    allzero = denom == 0
+    numer = numer + allzero
+    denom = denom + allzero
+    return np.sqrt(1.0 - (numer / denom))
+
+
 def get_voxel_ratio(hipct_resolution, dmri_resolution):
     """Return the number of HiP-CT voxels that fit in one dMRI voxel."""
     voxel_ratio = int(dmri_resolution // hipct_resolution)
