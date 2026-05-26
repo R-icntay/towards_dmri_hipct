@@ -3,6 +3,10 @@
 Projects 3D vector fields (e.g. eigenvectors from structure tensor analysis)
 onto a real spherical harmonic basis to produce fODF coefficients compatible
 with dipy's SH conventions.
+
+Adapted from:
+- dipy spherical harmonics module: https://github.com/dipy/dipy/blob/master/dipy/reconst/shm.py
+- fiberorient: https://github.com/scott-trinkle/fiberorient
 """
 
 import numpy as np
