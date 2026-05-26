@@ -34,6 +34,7 @@ from dipy.tracking.streamline import Streamlines
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from utils.analysis import get_voxel_ratio, get_analysis_shape, compute_gfa_sh
 # from utils.visualization import show_tracts_img_2d, line_colors
+# import matplotlib.pyplot as plt
 
 
 # ---------------------------------------------------------------------------
@@ -193,6 +194,8 @@ if __name__ == "__main__":
     gfa = compute_gfa_sh(sh_coeffs_subset, sh0_index=0)
     gfa = np.nan_to_num(gfa, nan=0.0, posinf=0.0, neginf=0.0)
     print(f"GFA shape: {gfa.shape}")
+    # plt.imshow((gfa[:, :, 200] > GFA_THRESHOLD).T); plt.show()
+    # plt.hist(gfa[gfa > 0].ravel(), bins=100, density=True); plt.xlabel('GFA'); plt.show()
 
     # ---- Load stopping criterion cleaning mask ----
     sc_mask_zarr_path = ODF_ANALYSIS_DIR / "15.13um_I58_brain-hemi_complete-sample_pag-0.17_0.31_jp2_masked_stopping_criteria_cleaning_mask.zarr"
@@ -212,6 +215,7 @@ if __name__ == "__main__":
     sc_mask_subset = (sc_mask_subset > 0.5).astype(np.uint8)
     sc_mask_subset = 1 - sc_mask_subset[..., :gfa.shape[2]]
     print(f"Processed SC mask shape: {sc_mask_subset.shape}")
+    # fig, axs = plt.subplots(1, 3); axs[0].imshow(seed_mask_subset[:, :, 325].T); axs[1].imshow(sc_mask_subset[:, :, 200].T); axs[2].imshow(gfa[:, :, 200].T); plt.show()
 
     # ---- Load and prepare WM masks ----
     assert HIPCT_LEVEL4_PATH.exists()
@@ -248,6 +252,7 @@ if __name__ == "__main__":
     wm_mask_binned = (zoom(wm_mask.astype(np.uint8), scale_factors, order=0, prefilter=False) > 0.5).astype(bool)
     print(f"Downsampled WM mask shape: {wm_mask_binned.shape}")
     del wm_mask, wm_gm_mask, wm_mask_vol, hipct_level4_data
+    # fig, axs = plt.subplots(1, 2); axs[0].imshow(wm_gm_mask_binned[:, :, 100].T); axs[1].imshow(wm_mask_binned[:, :, 100].T); plt.show()
 
     # ---- Create composite stopping criterion ----
     gfa_masked = np.where(sc_mask_subset, gfa, 0)
@@ -260,6 +265,8 @@ if __name__ == "__main__":
     print(f"Stopping criterion mask shape: {stopping_mask.shape}")
 
     stopping_criterion = BinaryStoppingCriterion(stopping_mask)
+    # plt.imshow(stopping_mask[:, :, 200].T); plt.show()
+    # plt.imshow(gfa_masked[:, :, 200].T); plt.axis('off'); plt.show()
 
     # ---- Generate and sample seeds ----
     seeds = np.argwhere(seed_mask_subset > 0)
