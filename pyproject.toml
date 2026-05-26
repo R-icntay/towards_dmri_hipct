@@ -1,0 +1,15 @@
+[project]
+name = "towards-dmri-hipct"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "antspyx>=0.6.3",
+    "dipy>=1.12.1",
+    "fury>=0.12.0",
+    "matplotlib>=3.10.9",
+    "natsort>=8.4.0",
+    "numpy==1.26.4",
+    "zarr==2.18.7",
+]
