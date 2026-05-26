@@ -22,4 +22,6 @@ dependencies = [
     "scikit-image>=0.26.0",
     "ome-zarr-models==0.1.10",
     "pydantic-zarr>=0.7",
+    "nibabel>=5.4.2",
+    "jupyter>=1.1.1",
 ]
