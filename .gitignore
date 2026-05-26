@@ -162,4 +162,5 @@ cython_debug/
 # Agent files
 /paper
 /.claude
+/wip
 CLAUDE.md

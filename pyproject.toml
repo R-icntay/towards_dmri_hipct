@@ -14,6 +14,12 @@ dependencies = [
     "numpy==1.26.4",
     "opencv-python>=4.11.0.86",
     "tqdm>=4.67.3",
+    "scikit-learn>=1.5.0",
     "scipy>=1.13.0",
     "zarr==2.18.7",
+    "fiberorient>=0.2",
+    "setuptools<71",
+    "scikit-image>=0.26.0",
+    "ome-zarr-models==0.1.10",
+    "pydantic-zarr>=0.7",
 ]
