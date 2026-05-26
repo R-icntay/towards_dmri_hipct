@@ -33,18 +33,12 @@ from tqdm import tqdm
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from utils.eigen_decomposition import eig_special_3d
+from utils.analysis import get_voxel_ratio
 
 
 # ---------------------------------------------------------------------------
 # Utility functions
 # ---------------------------------------------------------------------------
-
-def get_voxel_ratio(hipct_resolution, dmri_resolution):
-    """Return the number of HiP-CT voxels that fit in one dMRI voxel."""
-    voxel_ratio = int(dmri_resolution // hipct_resolution)
-    print(f"Number of HiP-CT voxels in 1 dMRI voxel: {voxel_ratio}")
-    return voxel_ratio
-
 
 def get_start_end_indices(start_idx, desired_depth, voxel_ratio, padding):
     """Compute padded start/end Z indices, ensuring depth is divisible by voxel_ratio."""
