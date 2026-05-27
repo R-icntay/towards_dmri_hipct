@@ -132,6 +132,24 @@ def compute_ACC(u, v):
     return np.real_if_close(acc)
 
 
+def drop_nans_infs(vec_roi):
+    """Drop NaN and Inf values from an eigenvector array of shape (x, y, z, 3)."""
+    assert vec_roi.shape[-1] == 3, "Eigenvectors should be of shape (x, y, z, 3)"
+    print(f"Shape before dropping NaN/Inf: {vec_roi.shape}")
+
+    mask = np.ones(vec_roi.shape[:-1], dtype=bool)
+    for dim in range(3):
+        mask[np.isnan(vec_roi[..., dim])] = False
+        mask[np.isinf(vec_roi[..., dim])] = False
+
+    nan_inf_fraction = 1 - np.sum(mask) / mask.size
+    print(f"Fraction of NaN/Inf: {nan_inf_fraction * 100:.2f}%")
+
+    vec_roi = vec_roi[mask]
+    print(f"Shape after dropping NaN/Inf: {vec_roi.shape}")
+    return vec_roi
+
+
 def compute_structure_tensor_metrics(eigenvalues, eps=1e-8):
     """Compute Westin linear, planar, and spherical anisotropy from eigenvalues.
 
