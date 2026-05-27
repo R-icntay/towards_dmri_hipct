@@ -1,5 +1,7 @@
 # Bridging the microstructural gap in human connectomics using HiP-CT as a reference for diffusion MRI
 
+![](figures/cover_fig.jpg)
+
 Code repository for the paper:
 
 > **Bridging the microstructural gap in human connectomics using hierarchical phase-contrast tomography as a reference for diffusion MRI in the human brain**
@@ -14,15 +16,26 @@ This repository contains the analysis code for validating diffusion MRI (dMRI) f
 
 ## Pipeline
 
+Scripts in `scripts/` are numbered by analysis stage:
+
 | Step | Script | Description |
 |------|--------|-------------|
-| 1 | `scripts/01_zarr_conversion.py` | Convert raw HiP-CT tomographic data to chunked Zarr format |
-| 2 | `scripts/02_structure_tensor.py` | 3D structure tensor analysis (Gaussian derivatives, eigendecomposition) |
-| 3 | `scripts/03_fodf_estimation.py` | Aggregate eigenvectors into supervoxel fODFs via spherical harmonics |
-| 4 | `scripts/04_registration.py` | Cross-modal dMRI-to-HiP-CT registration (ANTsPy) |
-| 5 | `scripts/05_tractography.py` | Probabilistic tractography from fODFs |
-| 6 | `scripts/06_vessel_masking.py` | Vascular signal suppression (pre-STA and gradient-level masking) |
-| 7 | `scripts/07_quantitative_comparison.py` | Angular correlation coefficient, peak analysis, FA/GFA metrics |
+| 1 | `01_mask_preparation.py` | Upsample organ masks to full resolution, apply to HiP-CT volumes |
+| 2 | `02_structure_tensor.py` | 3D structure tensor analysis (Gaussian derivatives, eigendecomposition) |
+| 3 | `03_fodf_estimation.py` | Aggregate eigenvectors into supervoxel fODFs via spherical harmonics (800 µm) |
+| 3 | `03_fodf_estimation_400um.py` | Same pipeline at 400 µm resolution |
+| 4 | `04_registration.py` | Cross-modal dMRI-to-HiP-CT registration (ANTsPy SyNRA) |
+| 4b | `04b_streamline_registration.py` | Apply inverse transforms to dMRI tractography streamlines |
+| 5 | `05_tractography.py` | Probabilistic/deterministic fiber tracking from SH coefficients (800 µm) |
+| 5b | `05b_tractogram_postprocessing.py` | Rescale, compress, and filter tractograms (800 µm) |
+| 5 | `05_tractography_400um.py` | Same pipeline at 400 µm resolution |
+| 5b | `05b_tractogram_postprocessing_400um.py` | Same pipeline at 400 µm resolution |
+| 6 | `06_vessel_masking.py` | STA with gradient-level vessel masking, per-supervoxel fODF comparison |
+| 7 | `07_quantitative_comparison.py` | Statistical tests, ACC analysis, anisotropy metrics, violin plots |
+| 8 | `08_omezarr_creation.py` | Multi-resolution OME-Zarr image pyramids for visualization |
+| 9 | `09_neuroglancer_visualization.txt` | Neuroglancer viewer config (`ngtools`) |
+
+Shared utilities live in `utils/` (eigensolver, Spherical Harmonics projection, analysis metrics, visualization helpers).
 
 ## Setup
 
@@ -30,16 +43,24 @@ Requires Python >= 3.11. Dependencies are managed with [uv](https://docs.astral.
 
 ```bash
 uv sync
+uv run python scripts/<script>.py
 ```
 
 ## Key dependencies
 
-- [structure-tensor](https://github.com/Skielex/structure-tensor) — 3D structure tensor computation
-- [DIPY](https://dipy.org/) — spherical harmonics, fODF tools, tractography
-- [ANTsPy](https://github.com/ANTsX/ANTsPy) — cross-modal image registration
-- [Zarr](https://zarr.dev/) — chunked array storage for large volumes
-- [Dask](https://dask.org/) — parallel out-of-core processing
+| Library | Role |
+|---------|------|
+| [SciPy](https://scipy.org/) | 3D Gaussian derivative filters for structure tensor computation |
+| [DIPY](https://dipy.org/) | Spherical harmonics, fODF tools, tractography |
+| [ANTsPy](https://github.com/ANTsX/ANTsPy) | Cross-modal image registration (rigid, affine, SyN) |
+| [Zarr](https://zarr.dev/) (v2.18) | Chunked array storage for large HiP-CT volumes (~190 GB) |
+| [Dask](https://dask.org/) | Parallel out-of-core processing |
+| [fiberorient](https://github.com/scott-trinkle/fiberorient) | Fibonacci sphere sampling for spherical histogram fODF estimation |
+| [NiBabel](https://nipy.org/nibabel/) | NIfTI I/O and streamline tractogram handling |
+| [FURY](https://fury.gl/) | 3D visualization of fODF glyphs and tractography |
+
+See [`pyproject.toml`](pyproject.toml) for the full dependency list.
 
 ## License
 
-See [LICENSE](LICENSE).
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
