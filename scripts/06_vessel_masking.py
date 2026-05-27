@@ -32,7 +32,7 @@ from PIL import Image
 from scipy.ndimage import gaussian_filter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from utils.analysis import compute_FA, get_voxel_ratio, validate_eigenvalue_order
+from utils.analysis import compute_FA, drop_nans_infs, get_voxel_ratio, validate_eigenvalue_order
 from utils.eigen_decomposition import eig_special_3d
 
 
@@ -189,24 +189,6 @@ def orientation_analysis(
         image_slice.save(str(output_path))
 
     print("Done")
-
-
-def drop_nans_infs(vec_roi):
-    """Drop NaN and Inf values from an eigenvector array of shape (x, y, z, 3)."""
-    assert vec_roi.shape[-1] == 3, "Eigenvectors should be of shape (x, y, z, 3)"
-    print(f"Shape before dropping NaN/Inf: {vec_roi.shape}")
-
-    mask = np.ones(vec_roi.shape[:-1], dtype=bool)
-    for dim in range(3):
-        mask[np.isnan(vec_roi[..., dim])] = False
-        mask[np.isinf(vec_roi[..., dim])] = False
-
-    nan_inf_fraction = 1 - np.sum(mask) / mask.size
-    print(f"Fraction of NaN/Inf: {nan_inf_fraction * 100:.2f}%")
-
-    vec_roi = vec_roi[mask]
-    print(f"Shape after dropping NaN/Inf: {vec_roi.shape}")
-    return vec_roi
 
 
 def show_single_odf(odf_values, sphere, min_pix=1000, interactive=False, out_path=None):
@@ -620,6 +602,9 @@ if __name__ == "__main__":
         odf_unmasked = ODF(degree=SH_DEGREE, method='precompute').fit(eigen_vector)
         show_odf(odf_unmasked, sphere, interactive=False, out_path="pons_voi_odf_before_masking.tif")
         print(f"Global fODF coefficients shape: {odf_unmasked.coef.shape}")
+        unmasked_odf_dir = Path(f"{SAMPLE_TAG}_odf_analysis")
+        unmasked_odf_dir.mkdir(parents=True, exist_ok=True)
+        np.save(unmasked_odf_dir / "whole_voi_odf_coef.npy", odf_unmasked.coef)
 
         # --- Masked ---
         print("\n--- Masked global fODF ---")
@@ -631,3 +616,6 @@ if __name__ == "__main__":
         odf_masked = ODF(degree=SH_DEGREE, method='precompute').fit(eigen_vector_masked)
         show_odf(odf_masked, sphere, interactive=False, out_path="pons_voi_odf_after_masking.tif")
         print(f"Masked global fODF coefficients shape: {odf_masked.coef.shape}")
+        masked_odf_dir = Path(f"gradient_masked_{SAMPLE_TAG}_odf_analysis")
+        masked_odf_dir.mkdir(parents=True, exist_ok=True)
+        np.save(masked_odf_dir / "whole_voi_odf_coef.npy", odf_masked.coef)
