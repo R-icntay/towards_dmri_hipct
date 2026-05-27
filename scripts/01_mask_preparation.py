@@ -13,7 +13,8 @@ Four independent scenarios are controlled by boolean flags:
 1. Brain mask upsampling + application to original JP2 images
 2. Mask application to level-4 downsampled images
 3. White-matter mask upsampling (no image masking)
-4. Stopping-criterion cleaning mask upsampling to Zarr
+4. Stopping-criterion cleaning mask upsampling to Zarr (masks out
+   streak-artefact regions to prevent spurious fiber tractography)
 """
 
 import os
@@ -261,6 +262,8 @@ if __name__ == "__main__":
 
     # ======================================================================
     # Scenario 4: Upsample stopping-criterion cleaning mask to Zarr
+    # Masks out streak-artefact regions to prevent spurious fiber
+    # tractography (used as part of the stopping criterion in step 05).
     # ======================================================================
     if RUN_SC_MASK_UPSAMPLING:
         print("\n" + "=" * 60)

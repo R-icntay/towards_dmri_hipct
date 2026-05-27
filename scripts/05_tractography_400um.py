@@ -197,7 +197,7 @@ if __name__ == "__main__":
     # plt.imshow((gfa[:, :, 200] > GFA_THRESHOLD).T); plt.show()
     # plt.hist(gfa[gfa > 0].ravel(), bins=100, density=True); plt.xlabel('GFA'); plt.show()
 
-    # ---- Load stopping criterion cleaning mask ----
+    # ---- Load stopping criterion cleaning mask (masks out streak-artefact regions) ----
     sc_mask_zarr_path = ODF_ANALYSIS_DIR / "15.13um_I58_brain-hemi_complete-sample_pag-0.17_0.31_jp2_masked_stopping_criteria_cleaning_mask.zarr"
     assert sc_mask_zarr_path.exists()
     sc_mask = zarr.open(sc_mask_zarr_path, mode='r')
