@@ -24,4 +24,5 @@ dependencies = [
     "pydantic-zarr>=0.7",
     "nibabel>=5.4.2",
     "jupyter>=1.1.1",
+    "glymur>=0.14.8",
 ]
