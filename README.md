@@ -12,7 +12,8 @@ Code repository for the paper:
 
 ## Overview
 
-This repository contains the analysis code for validating diffusion MRI (dMRI) fiber orientation estimates using Hierarchical Phase-Contrast Tomography (HiP-CT) as a ground truth microscopic reference. The pipeline applies Structure Tensor Analysis (STA) to HiP-CT data to compute fiber Orientation Distribution Functions (fODFs) and perform tractography analogous to dMRI, enabling direct cross-modal comparison.
+We position Hierarchical Phase-Contrast Tomography (HiP-CT) as a transformative imaging modality for characterizing white matter fiber architectures in a manner that is complementary to diffusion MRI (dMRI). The pipeline applies Structure Tensor Analysis (STA) to HiP-CT data to compute fiber Orientation Distribution Functions (fODFs) and perform tractography analogous to dMRI. By integrating high-resolution
+X-ray phase-contrast imaging with dMRI, this work paves the way for multi-modal, multi-scale studies of brain connectivity in health and disease.
 
 ## Pipeline
 
