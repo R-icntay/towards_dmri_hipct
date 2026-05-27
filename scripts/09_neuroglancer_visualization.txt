@@ -1,0 +1,11 @@
+# HiP-CT ZARR files
+load "/media/eric/eric_backup_03/15.13um_I58_brain-hemi_complete-sample_pag-0.17_0.31_jp2_masked_structure_tensor_2.0_4.0_analysis/sub-I58_sample-01_chunk-01_hipCT.ome.zarr" --name "HiP-CT (hemi)"
+#load "/media/eric/sta_analysis/15.13um_I58_brain-hemi_complete-sample_pag-0.17_0.31_jp2_masked_structure_tensor_2.0_4.0_analysis/registration_new_dmri/hipct_hemi_downsampled_level_4_masked_norm_percentile_83_99.nii.zarr" --name "HiP-CT l4 (hemi)"
+
+# Example Registered dMRI and HiP-CT trk files
+load "/media/eric/sta_analysis/15.13um_I58_brain-hemi_complete-sample_pag-0.17_0.31_jp2_masked_structure_tensor_2.0_4.0_analysis/registration_new_dmri/sub-I58_sample-hemi_desc-CSD_tractography_registered_to_hipct_synra_hybrid_filtered_z200-500_minlen20mm_compressed.trk" --name "dMRI trk 800um"
+load "/media/eric/sta_analysis/15.13um_I58_brain-hemi_complete-sample_pag-0.17_0.31_jp2_masked_structure_tensor_2.0_4.0_analysis/probabilistic_streamlines_0_9880_0.88_4.3290e+06_filtered_z_200-500_minlen20.0_deterministic_sampled_7.0000e+05_compressed.trk" --name "HiP-CT trk 800um"
+
+# Rotate to RAS space
+transform "/media/eric/sta_analysis/15.13um_I58_brain-hemi_complete-sample_pag-0.17_0.31_jp2_masked_structure_tensor_2.0_4.0_analysis/sub-I58_from-XPCT01_to-RAS_xfm.lta"
+
