@@ -25,6 +25,7 @@ dependencies = [
     "nibabel>=5.4.2",
     "nifti-zarr>=0.1",
     "pandas>=2.0",
+    "seaborn>=0.13",
     "jupyter>=1.1.1",
     "glymur>=0.14.8",
     "ngtools==0.1.6",
