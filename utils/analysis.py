@@ -100,6 +100,95 @@ def validate_eigenvalue_order(eigenvalues):
     )
 
 
+def compute_ACC(u, v):
+    """Compute the Angular Correlation Coefficient between two sets of SH coefficients.
+
+    Parameters
+    ----------
+    u : ndarray
+        SH coefficients for the first fODF (real or complex).
+    v : ndarray
+        SH coefficients for the second fODF (real or complex).
+
+    Returns
+    -------
+    float
+        ACC value, typically in [-1, 1].
+
+    Raises
+    ------
+    ValueError
+        If either input has zero norm.
+    """
+    numerator = np.sum(u * np.conjugate(v))
+    norm_u = np.linalg.norm(u)
+    norm_v = np.linalg.norm(v)
+    denominator = norm_u * norm_v
+
+    if denominator == 0:
+        raise ValueError("One of the input coefficient arrays has zero norm.")
+
+    acc = numerator / denominator
+    return np.real_if_close(acc)
+
+
+def compute_structure_tensor_metrics(eigenvalues, eps=1e-8):
+    """Compute Westin linear, planar, and spherical anisotropy from eigenvalues.
+
+    Parameters
+    ----------
+    eigenvalues : ndarray, shape (3, X, Y, Z)
+        Sorted eigenvalues where eigenvalues[0] >= eigenvalues[1] >= eigenvalues[2].
+    eps : float, optional
+        Small value added to the denominator to avoid division by zero.
+
+    Returns
+    -------
+    dict
+        Keys: 'linear_anisotropy', 'planar_anisotropy', 'spherical_anisotropy',
+        each an ndarray of shape (X, Y, Z).
+    """
+    assert validate_eigenvalue_order(eigenvalues), \
+        "Eigenvalues must be ordered lambda_1 >= lambda_2 >= lambda_3"
+
+    lambda1 = eigenvalues[0]
+    lambda2 = eigenvalues[1]
+    lambda3 = eigenvalues[2]
+
+    denominator = lambda1 + eps
+
+    return {
+        'linear_anisotropy': (lambda2 - lambda3) / denominator,
+        'planar_anisotropy': (lambda1 - lambda2) / denominator,
+        'spherical_anisotropy': lambda3 / denominator,
+    }
+
+
+def cohen_d(x, y):
+    """Compute Cohen's d effect size with 95% confidence interval.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Two independent samples.
+
+    Returns
+    -------
+    d : float
+        Cohen's d (positive when mean(x) > mean(y)).
+    conf_int : ndarray, shape (2,)
+        95% confidence interval [lower, upper].
+    """
+    x, y = np.asarray(x), np.asarray(y)
+    nx, ny = len(x), len(y)
+    pooled_sd = np.sqrt(((nx - 1) * np.var(x, ddof=1) + (ny - 1) * np.var(y, ddof=1))
+                        / (nx + ny - 2))
+    d = (np.mean(x) - np.mean(y)) / pooled_sd
+    se = np.sqrt((nx + ny) / (nx * ny) + d ** 2 / (2 * (nx + ny)))
+    conf_int = d + np.array([-1, 1]) * 1.96 * se
+    return d, conf_int
+
+
 def extract_rotation_matrix(affine_matrix):
     """Extract the pure rotation component from a 4x4 affine matrix via SVD.
 
