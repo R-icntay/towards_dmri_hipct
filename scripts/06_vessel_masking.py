@@ -464,6 +464,9 @@ if __name__ == "__main__":
 
         FA = compute_FA(eigenvalues=eigen_value)
         print(f"FA shape: {FA.shape}")
+        odf_dir = Path(f"{SAMPLE_TAG}_odf_analysis")
+        odf_dir.mkdir(parents=True, exist_ok=True)
+        np.save(odf_dir / "FA.npy", FA)
         fa_dir = Path(f"{SAMPLE_TAG}_FA")
         fa_dir.mkdir(parents=True, exist_ok=True)
         for slice_index in range(FA.shape[-1]):
@@ -487,6 +490,9 @@ if __name__ == "__main__":
 
         FA_masked = compute_FA(eigenvalues=eigen_value_masked)
         print(f"Masked FA shape: {FA_masked.shape}")
+        masked_odf_dir = Path(f"gradient_masked_{SAMPLE_TAG}_odf_analysis")
+        masked_odf_dir.mkdir(parents=True, exist_ok=True)
+        np.save(masked_odf_dir / "masked_FA.npy", FA_masked)
         masked_fa_dir = Path(f"gradient_masked_{SAMPLE_TAG}_FA")
         masked_fa_dir.mkdir(parents=True, exist_ok=True)
         for slice_index in range(FA_masked.shape[-1]):
