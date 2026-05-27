@@ -29,6 +29,7 @@ from utils.analysis import (
     cohen_d,
     compute_ACC,
     compute_structure_tensor_metrics,
+    drop_nans_infs,
     get_voxel_ratio,
     validate_eigenvalue_order,
 )
@@ -128,24 +129,6 @@ def _bin_to_supervoxels(arr, voxel_ratio):
         return arr.reshape(C, X // vr, vr, Y // vr, vr, Z // vr, vr)
     else:
         raise ValueError(f"Expected 3D or 4D array, got {arr.ndim}D")
-
-
-def _drop_nans_infs(vec_roi):
-    """Drop NaN and Inf values from an eigenvector array of shape (x, y, z, 3)."""
-    assert vec_roi.shape[-1] == 3, "Eigenvectors should be of shape (x, y, z, 3)"
-    print(f"Shape before dropping NaN/Inf: {vec_roi.shape}")
-
-    mask = np.ones(vec_roi.shape[:-1], dtype=bool)
-    for dim in range(3):
-        mask[np.isnan(vec_roi[..., dim])] = False
-        mask[np.isinf(vec_roi[..., dim])] = False
-
-    nan_inf_fraction = 1 - np.sum(mask) / mask.size
-    print(f"Fraction of NaN/Inf: {nan_inf_fraction * 100:.2f}%")
-
-    vec_roi = vec_roi[mask]
-    print(f"Shape after dropping NaN/Inf: {vec_roi.shape}")
-    return vec_roi
 
 
 def _run_statistical_battery(unmasked, masked, metric_name):
@@ -378,7 +361,7 @@ if RUN_SUB_VOI_ANALYSIS:
         evec_reordered = np.stack([evec[RGB_ORDER[0]], evec[RGB_ORDER[1]], evec[RGB_ORDER[2]]], axis=0)
         evec_xyz = np.transpose(evec_reordered, (1, 2, 3, 0))
         if np.any(np.isnan(evec_xyz)) or np.any(np.isinf(evec_xyz)):
-            evec_xyz = _drop_nans_infs(evec_xyz)
+            evec_xyz = drop_nans_infs(evec_xyz)
 
         odf = ODF(degree=SH_DEGREE, method='precompute').fit(evec_xyz)
         odf2sphere = odf.to_sphere(sphere)
