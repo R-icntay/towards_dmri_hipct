@@ -1,4 +1,4 @@
-# This visualizes streamlines overlaid on the raw data using ngtools. To run this simply do the following in a terminal: nglocal --stdin ./09_neuroglancer_visualization.txt
+# This visualizes on Neuroglancer the streamlines overlaid on the raw data using ngtools. To run this simply do the following in a terminal: nglocal --stdin ./09_neuroglancer_visualization.txt
 
 # HiP-CT ZARR files
 load "/media/eric/eric_backup_03/15.13um_I58_brain-hemi_complete-sample_pag-0.17_0.31_jp2_masked_structure_tensor_2.0_4.0_analysis/sub-I58_sample-01_chunk-01_hipCT.ome.zarr" --name "HiP-CT (hemi)"
